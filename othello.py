@@ -57,3 +57,38 @@ def calculate_score(board,player):
             if col==player:
                 score+=1
     return score
+def clearArea(x1,y1,x2,y2,color):
+    t.tracer(0,0)
+    t.setpos(x1,y1)
+    t.setheading(0)
+    t.color(color)
+    t.pensize(1)
+    t.pendown()
+    t.fillcolor(color)
+    t.begin_fill()
+    for i in (0,1):
+        t.forward(x2-x1)
+        t.left(90)
+        t.forward(y2-y1)
+        t.left(90)
+    t.end_fill()
+    t.penup()
+    t.color('black')
+    t.tracer(1,0)
+def updateScore(board,player):
+    t.tracer(0,0)
+    if player=="black":
+        clearArea(-205,295,-50,270,'white')
+        t.setpos(-200,270)
+        t.write("black: "+str(calculate_score(board,"black")),font=("Arial", 20, "normal"))
+        clearArea(-205, 245, -50, 220, 'white')
+        t.setpos(-200, 220)
+        t.write("white to move",font=("Arial", 20, "normal"))
+    elif player=="white":
+        clearArea(-205, 270, -50, 245, 'white')
+        t.setpos(-200,245)
+        t.write("white: " + str(calculate_score(board,"white")),font=("Arial", 20, "normal"))
+        clearArea(-205, 245, -50, 220, 'white')
+        t.setpos(-200,220)
+        t.write("black to move",font=("Arial", 20, "normal"))
+    t.tracer(1,0)
