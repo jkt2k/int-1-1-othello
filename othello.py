@@ -158,3 +158,61 @@ def validMove(board,player,row,column):
         return True
     else:
         return False
+def allMoves(board,player):
+    validMoves=[]
+    for row in range(0,len(board)):
+        for square in range(0,len(board[row])):
+            if validMove(board,player,row,square)==True:
+                validMoves.append([row,square])
+    return validMoves
+def nextBoard(board,player,move):
+    result=deepcopy(board)
+    result[move[0]][move[1]]=player
+    return result
+def eatTheSandwich():
+    return 1
+def inputHandler(x,y):
+    global whoseTurn
+    global squaresToBeReplaced
+    global move
+    if whoseTurn == 'black':
+        otherPlayer = 'white'
+    else:
+        otherPlayer = 'black'
+    squaresToBeReplaced=[]
+    row=whichRow(y)
+    column=whichColumn(x)
+    if column in range(0,8) and row in range(0,8) and validMove(gameBoard,whoseTurn,row,column)==True:
+        move+=1
+        gameBoard[row][column]=whoseTurn
+        stampPlayer(row,column,whoseTurn)
+        for square in squaresToBeReplaced:
+            gameBoard[square[0]][square[1]]=whoseTurn
+            stampPlayer(square[0],square[1],whoseTurn)
+        calculateScore(gameBoard,'black')
+        calculateScore(gameBoard,'white')
+        if move==60:
+            blackTotal=0
+            whiteTotal=0
+            for row in gameBoard:
+                for square in row:
+                    if square=='black':
+                        blackTotal+=1
+                    else:
+                        whiteTotal+=1
+            t.tracer(0,0)
+            t.setpos(50, 220)
+            if blackTotal>whiteTotal:
+                t.write('black wins', font=("Arial", 20, "normal"))
+            elif whiteTotal>blackTotal:
+                t.write('white wins', font=("Arial", 20, "normal"))
+            else:
+                t.write('draw', font=("Arial", 20, "normal"))
+            t.tracer(1,0)
+        if len(allMoves(gameBoard,otherPlayer))!=0:
+            updateScore(gameBoard, otherPlayer)
+            updateScore(gameBoard, whoseTurn)
+            whoseTurn=otherPlayer
+        else:
+            updateScore(gameBoard,whoseTurn)
+            updateScore(gameBoard,otherPlayer)
