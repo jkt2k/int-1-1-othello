@@ -41,3 +41,19 @@ def x_from_column(column):
     return((column*50)-175)
 def y_from_row(row):
     return((row*-50)+175)
+def stamp_player(row, column, player):
+    t.tracer(0,0)
+    t.setpos(x_from_column(column),y_from_row(row))
+    t.dot(37,'green')
+    t.dot(35, player)
+    t.tracer(1,0)
+def update_board(board,player,row,col):
+    board[row][col]=player
+    return board
+def calculate_score(board,player):
+    score=0
+    for row in board:
+        for col in row:
+            if col==player:
+                score+=1
+    return score
