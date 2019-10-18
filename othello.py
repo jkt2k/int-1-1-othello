@@ -33,3 +33,11 @@ def draw_board():
         t.forward(400)
     t.penup()
     t.tracer(1,0)
+def which_row(y):
+    return(int(8-((y+200)/50)))
+def which_column(x):
+    return(int((x+200)/50))
+def x_from_column(column):
+    return((column*50)-175)
+def y_from_row(row):
+    return((row*-50)+175)
