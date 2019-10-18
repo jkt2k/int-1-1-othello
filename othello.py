@@ -9,7 +9,7 @@ move=0
 sec=0
 t.setup(600,600)
 t.pensize(5)
-def draw_board():
+def drawBoard():
     t.tracer(0,0)
     t.penup()
     t.setpos(-200,200)
@@ -33,31 +33,31 @@ def draw_board():
         t.forward(400)
     t.penup()
     t.tracer(1,0)
-def which_row(y):
+def whichRow(y):
     return(int(8-((y+200)/50)))
-def which_column(x):
+def whichColumn(x):
     return(int((x+200)/50))
-def x_from_column(column):
+def xFromColumn(column):
     return((column*50)-175)
-def y_from_row(row):
+def yFromRow(row):
     return((row*-50)+175)
-def stamp_player(row, column, player):
+def stampPlayer(row, column, player):
     t.tracer(0,0)
-    t.setpos(x_from_column(column),y_from_row(row))
+    t.setpos(xFromColumn(column),yFromRow(row))
     t.dot(37,'green')
     t.dot(35, player)
     t.tracer(1,0)
-def update_board(board,player,row,col):
+def updateBoard(board,player,row,col):
     board[row][col]=player
     return board
-def calculate_score(board,player):
+def calculateScore(board,player):
     score=0
     for row in board:
         for col in row:
             if col==player:
                 score+=1
     return score
-def clear_area(x1,y1,x2,y2,color):
+def clearArea(x1,y1,x2,y2,color):
     t.tracer(0,0)
     t.setpos(x1,y1)
     t.setheading(0)
@@ -75,20 +75,20 @@ def clear_area(x1,y1,x2,y2,color):
     t.penup()
     t.color('black')
     t.tracer(1,0)
-def update_score(board,player):
+def updateScore(board,player):
     t.tracer(0,0)
     if player=="black":
-        clear_area(-205,295,-50,270,'white')
+        clearArea(-205,295,-50,270,'white')
         t.setpos(-200,270)
-        t.write("black: "+str(calculate_score(board,"black")),font=("Arial", 20, "normal"))
-        clear_area(-205, 245, -50, 220, 'white')
+        t.write("black: "+str(calculateScore(board,"black")),font=("Arial", 20, "normal"))
+        clearArea(-205, 245, -50, 220, 'white')
         t.setpos(-200, 220)
         t.write("white to move",font=("Arial", 20, "normal"))
     elif player=="white":
-        clear_area(-205, 270, -50, 245, 'white')
+        clearArea(-205, 270, -50, 245, 'white')
         t.setpos(-200,245)
-        t.write("white: " + str(calculate_score(board,"white")),font=("Arial", 20, "normal"))
-        clear_area(-205, 245, -50, 220, 'white')
+        t.write("white: " + str(calculateScore(board,"white")),font=("Arial", 20, "normal"))
+        clearArea(-205, 245, -50, 220, 'white')
         t.setpos(-200,220)
         t.write("black to move",font=("Arial", 20, "normal"))
     t.tracer(1,0)
@@ -96,14 +96,65 @@ def initialize():
     global gameBoard
     global move
     move=0
-    draw_board()
-    stamp_player(3,3,"white")
-    gameBoard=(update_board(gameBoard,"white",3,3))
-    stamp_player(4,4,"white")
-    gameBoard = (update_board(gameBoard, "white", 4, 4))
-    stamp_player(3,4,"black")
-    gameBoard = (update_board(gameBoard, "black", 3, 4))
-    stamp_player(4,3,"black")
-    gameBoard = (update_board(gameBoard, "black", 4, 3))
-    update_score(gameBoard,"black")
-    update_score(gameBoard,"white")
+    drawBoard()
+    stampPlayer(3,3,"white")
+    gameBoard=(updateBoard(gameBoard,"white",3,3))
+    stampPlayer(4,4,"white")
+    gameBoard = (updateBoard(gameBoard, "white", 4, 4))
+    stampPlayer(3,4,"black")
+    gameBoard = (updateBoard(gameBoard, "black", 3, 4))
+    stampPlayer(4,3,"black")
+    gameBoard = (updateBoard(gameBoard, "black", 4, 3))
+    updateScore(gameBoard,"black")
+    updateScore(gameBoard,"white")
+def sandwich(board,rowChange,columnChange,originalPlayer,previousRow,previousColumn,firstCheck,squaresInThisSequence):
+    global squaresToBeReplaced
+    if rowChange==-1 and previousRow==0 and firstCheck==False:
+        return False
+    elif rowChange==1 and previousRow==7 and firstCheck==False:
+        return False
+    elif columnChange==-1 and previousColumn==0 and firstCheck==False:
+        return False
+    elif columnChange==1 and previousColumn==7 and firstCheck==False:
+        return False
+    squareBeingChecked=board[previousRow+rowChange][previousColumn+columnChange]
+    if squareBeingChecked==0:
+        return False
+    elif squareBeingChecked==originalPlayer and firstCheck==True:
+        return False
+    elif squareBeingChecked==originalPlayer and firstCheck==False:
+        for square in squaresInThisSequence:
+            squaresToBeReplaced.append(square)
+        return True
+    else:
+        squaresInThisSequence.append([previousRow + rowChange, previousColumn + columnChange])
+        return sandwich(board,rowChange,columnChange,originalPlayer,previousRow+rowChange,previousColumn+columnChange,False,squaresInThisSequence)
+def validMove(board,player,row,column):
+    moveIsValid=False
+    if row not in range(0,8):
+        return False
+    if column not in range(0,8):
+        return False
+    if board[row][column]!=0:
+        return False
+    compass=[[0,0,0],[0,'null',0],[0,0,0]]
+    for layer in range(0,len(compass)):
+        for dir in range(0,len(compass)):
+            if row==0 and layer==0:
+                compass[layer][dir]='null'
+            elif column==0 and dir==0:
+                compass[layer][dir]='null'
+            elif row == 7 and layer == 2:
+                compass[layer][dir] = 'null'
+            elif column == 7 and dir == 2:
+                compass[layer][dir] = 'null'
+    for layer in range(0,len(compass)):
+        for dir in range(0,len(compass)):
+            if compass[layer][dir]!='null':
+                if not board[row+layer-1][column+dir-1]==0:
+                    if sandwich(board,layer-1,dir-1,player,row,column,True,[])==True:
+                        moveIsValid=True
+    if moveIsValid==True:
+        return True
+    else:
+        return False
