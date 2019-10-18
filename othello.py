@@ -216,3 +216,23 @@ def inputHandler(x,y):
         else:
             updateScore(gameBoard,whoseTurn)
             updateScore(gameBoard,otherPlayer)
+def evaluate(board,player):
+    score=60
+    if player=='white':
+        opponent='black'
+    else:
+        opponent='white'
+    for move in allmoves(board,opponent):
+        score-=1
+def decide(board,level,player):
+    moves={}
+    if level==0:
+        for move in allMoves(board,player):
+            return evaluate()
+    for move in allMoves(board,player):
+        moves[nextboard(deepcopy(board))]
+
+
+initialize()
+t.onscreenclick(inputHandler)
+t.done()
