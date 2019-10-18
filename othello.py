@@ -9,7 +9,7 @@ move=0
 sec=0
 t.setup(600,600)
 t.pensize(5)
-def drawBoard():
+def drawBoard(): # Draws gameBoard
     t.tracer(0,0)
     t.penup()
     t.setpos(-200,200)
@@ -33,31 +33,31 @@ def drawBoard():
         t.forward(400)
     t.penup()
     t.tracer(1,0)
-def whichRow(y):
+def whichRow(y): # Gets row from Y coordinate
     return(int(8-((y+200)/50)))
-def whichColumn(x):
+def whichColumn(x): # Gets column from X coordinate
     return(int((x+200)/50))
-def xFromColumn(column):
+def xFromColumn(column): # Gets X coordinate from column
     return((column*50)-175)
-def yFromRow(row):
+def yFromRow(row): # Gets Y coordinate from row
     return((row*-50)+175)
-def stampPlayer(row, column, player):
+def stampPlayer(row, column, player): # Visualizes player having a piece at a certain position
     t.tracer(0,0)
     t.setpos(xFromColumn(column),yFromRow(row))
     t.dot(37,'green')
     t.dot(35, player)
     t.tracer(1,0)
-def updateBoard(board,player,row,col):
+def updateBoard(board,player,row,col): # Updates actual gameBoard, aside from visuals
     board[row][col]=player
     return board
-def calculateScore(board,player):
+def calculateScore(board,player): # Calculates player score
     score=0
     for row in board:
         for col in row:
             if col==player:
                 score+=1
     return score
-def clearArea(x1,y1,x2,y2,color):
+def clearArea(x1,y1,x2,y2,color): # Helper function that prevents overlapping text
     t.tracer(0,0)
     t.setpos(x1,y1)
     t.setheading(0)
@@ -75,7 +75,7 @@ def clearArea(x1,y1,x2,y2,color):
     t.penup()
     t.color('black')
     t.tracer(1,0)
-def updateScore(board,player):
+def updateScore(board,player): # Displays new player score
     t.tracer(0,0)
     if player=="black":
         clearArea(-205,295,-50,270,'white')
@@ -92,7 +92,7 @@ def updateScore(board,player):
         t.setpos(-200,220)
         t.write("black to move",font=("Arial", 20, "normal"))
     t.tracer(1,0)
-def initialize():
+def initialize(): # Sets initial values on startup
     global gameBoard
     global move
     move=0
@@ -107,7 +107,7 @@ def initialize():
     gameBoard = (updateBoard(gameBoard, "black", 4, 3))
     updateScore(gameBoard,"black")
     updateScore(gameBoard,"white")
-def sandwich(board,rowChange,columnChange,originalPlayer,previousRow,previousColumn,firstCheck,squaresInThisSequence):
+def sandwich(board,rowChange,columnChange,originalPlayer,previousRow,previousColumn,firstCheck,squaresInThisSequence): # Recursive function containing most of the logic for deciding which pieces are converted to other team
     global squaresToBeReplaced
     if rowChange==-1 and previousRow==0 and firstCheck==False:
         return False
@@ -129,7 +129,7 @@ def sandwich(board,rowChange,columnChange,originalPlayer,previousRow,previousCol
     else:
         squaresInThisSequence.append([previousRow + rowChange, previousColumn + columnChange])
         return sandwich(board,rowChange,columnChange,originalPlayer,previousRow+rowChange,previousColumn+columnChange,False,squaresInThisSequence)
-def validMove(board,player,row,column):
+def validMove(board,player,row,column): # Determines whether attempted move is valid
     moveIsValid=False
     if row not in range(0,8):
         return False
@@ -158,20 +158,18 @@ def validMove(board,player,row,column):
         return True
     else:
         return False
-def allMoves(board,player):
+def allMoves(board,player): # Returns a list of valid moves for given player
     validMoves=[]
     for row in range(0,len(board)):
         for square in range(0,len(board[row])):
             if validMove(board,player,row,square)==True:
                 validMoves.append([row,square])
     return validMoves
-def nextBoard(board,player,move):
+def nextBoard(board,player,move): # Returns hypothetical game state after player moves - could use this for AI
     result=deepcopy(board)
     result[move[0]][move[1]]=player
     return result
-def eatTheSandwich():
-    return 1
-def inputHandler(x,y):
+def inputHandler(x,y): # Contains all of the logic for making moves
     global whoseTurn
     global squaresToBeReplaced
     global move
@@ -216,22 +214,6 @@ def inputHandler(x,y):
         else:
             updateScore(gameBoard,whoseTurn)
             updateScore(gameBoard,otherPlayer)
-def evaluate(board,player):
-    score=60
-    if player=='white':
-        opponent='black'
-    else:
-        opponent='white'
-    for move in allmoves(board,opponent):
-        score-=1
-def decide(board,level,player):
-    moves={}
-    if level==0:
-        for move in allMoves(board,player):
-            return evaluate()
-    for move in allMoves(board,player):
-        moves[nextboard(deepcopy(board))]
-
 
 initialize()
 t.onscreenclick(inputHandler)
