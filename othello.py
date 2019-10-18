@@ -57,7 +57,7 @@ def calculate_score(board,player):
             if col==player:
                 score+=1
     return score
-def clearArea(x1,y1,x2,y2,color):
+def clear_area(x1,y1,x2,y2,color):
     t.tracer(0,0)
     t.setpos(x1,y1)
     t.setheading(0)
@@ -75,20 +75,35 @@ def clearArea(x1,y1,x2,y2,color):
     t.penup()
     t.color('black')
     t.tracer(1,0)
-def updateScore(board,player):
+def update_score(board,player):
     t.tracer(0,0)
     if player=="black":
-        clearArea(-205,295,-50,270,'white')
+        clear_area(-205,295,-50,270,'white')
         t.setpos(-200,270)
         t.write("black: "+str(calculate_score(board,"black")),font=("Arial", 20, "normal"))
-        clearArea(-205, 245, -50, 220, 'white')
+        clear_area(-205, 245, -50, 220, 'white')
         t.setpos(-200, 220)
         t.write("white to move",font=("Arial", 20, "normal"))
     elif player=="white":
-        clearArea(-205, 270, -50, 245, 'white')
+        clear_area(-205, 270, -50, 245, 'white')
         t.setpos(-200,245)
         t.write("white: " + str(calculate_score(board,"white")),font=("Arial", 20, "normal"))
-        clearArea(-205, 245, -50, 220, 'white')
+        clear_area(-205, 245, -50, 220, 'white')
         t.setpos(-200,220)
         t.write("black to move",font=("Arial", 20, "normal"))
     t.tracer(1,0)
+def initialize():
+    global gameBoard
+    global move
+    move=0
+    drawBoard()
+    stampPlayer(3,3,"white")
+    gameBoard=(updateBoard(gameBoard,"white",3,3))
+    stampPlayer(4,4,"white")
+    gameBoard = (updateBoard(gameBoard, "white", 4, 4))
+    stampPlayer(3,4,"black")
+    gameBoard = (updateBoard(gameBoard, "black", 3, 4))
+    stampPlayer(4,3,"black")
+    gameBoard = (updateBoard(gameBoard, "black", 4, 3))
+    updateScore(gameBoard,"black")
+    updateScore(gameBoard,"white")
